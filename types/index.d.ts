@@ -17,3 +17,11 @@ interface SignInWithGoogle {
     email: string
 }
 
+interface AuthFormProps {
+    type: AuthFormType;
+  }
+
+interface FirebaseError extends Error {
+    code?: string;
+    message: string;
+  }

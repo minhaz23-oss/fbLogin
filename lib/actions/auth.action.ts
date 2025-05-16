@@ -23,18 +23,22 @@ export async function signUp(params: SignUpParams) {
         message: 'user created successfully'
     }
 
-  } catch (error: any) {
-    console.log("error creating user ", error);
-    if (error.code === "auth/email-already-exists") {
+  }catch (error: unknown) {
+    // Type guard for error to check if it's a FirebaseError
+    const firebaseError = error as FirebaseError;
+    console.log("error creating user ", firebaseError);
+    
+    if (firebaseError.code === "auth/email-already-exists") {
       return {
         success: false,
         message: "This email is already in use",
       };
     }
+    
     return {
-        success: false,
-        message: 'error while creating a user'
-    }
+      success: false,
+      message: 'error while creating a user'
+    };
   }
 }
 

@@ -17,7 +17,9 @@ import { signIn, signInWithGoogle, signUp } from "@/lib/actions/auth.action";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const authFormSchema = (type: any) => {
+
+type AuthFormType = "sign-in" | "sign-up";
+const authFormSchema = (type: AuthFormType) => {
   return z.object({
     name: type === "sign-up" ? z.string().min(3) : z.string().optional(),
     email: z.string().email(),
@@ -25,7 +27,8 @@ const authFormSchema = (type: any) => {
   });
 };
 
-const AuthForm = ({ type }: any) => {
+
+const AuthForm = ({type}: AuthFormProps) => {
   const router = useRouter();
   const formSchema = authFormSchema(type);
   const [loading,setLoading] = useState(false);
