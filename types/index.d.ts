@@ -17,6 +17,12 @@ interface SignInWithGoogle {
     email: string
 }
 
+interface SignInWithFacebook {
+    uid: string,
+    name: string,
+    idToken: string,
+    email: string
+}
 interface AuthFormProps {
     type: AuthFormType;
   }

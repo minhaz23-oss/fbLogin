@@ -102,3 +102,35 @@ export async function signInWithGoogle(params: SignInWithGoogle) {
       }
     }
 }
+
+export async function signInWithFacebook(params: SignInWithFacebook) {
+  const { uid, name, email, idToken } = params;
+  
+  try {
+    // Check if user exists in your database
+    const userRecord = await db.collection("users").doc(uid).get();
+    
+    // If user doesn't exist, create a new user record
+    if (!userRecord.exists) {
+      await db.collection('users').doc(uid).set({
+        name,
+        email,
+        provider: 'facebook'
+      });
+    }
+    
+    // Set the session cookie
+    await setSessionCookie(idToken);
+    
+    return {
+      success: true,
+      message: 'Facebook sign-in successful'
+    };
+  } catch (error) {
+    console.log("Facebook sign-in error:", error);
+    return {
+      success: false,
+      message: 'Error during Facebook sign-in'
+    };
+  }
+}

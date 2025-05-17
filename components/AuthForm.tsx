@@ -9,11 +9,12 @@ import Link from "next/link";
 import FormField from "./FormField";
 import {
   createUserWithEmailAndPassword,
+  FacebookAuthProvider,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { signIn, signInWithGoogle, signUp } from "@/lib/actions/auth.action";
+import { signIn, signInWithFacebook, signInWithGoogle, signUp } from "@/lib/actions/auth.action";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -120,7 +121,39 @@ const AuthForm = ({type}: AuthFormProps) => {
       console.log("Google sign-in error:", error);
     }
   };
-
+  const handleFacebookSignIn = async () => {
+    try {
+      setLoading(true);
+      const provider = new FacebookAuthProvider();
+      const userCredentials = await signInWithPopup(auth,provider);
+      const idToken = await userCredentials.user.getIdToken();
+      if (!idToken) {
+        console.error("No ID token received from Facebook authentication");
+        return {
+          success: false,
+          message: "Authentication failed. Please try again.",
+        }
+      }
+      const {uid, displayName, email} = userCredentials.user;
+    const result = await signInWithFacebook({
+      uid,
+      name: displayName || "",
+      email: email || "",
+      idToken
+    });
+    
+    if (!result?.success) {
+      console.log(result?.message);
+      setLoading(false);
+      return;
+    }
+    
+    router.push('/');
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
   const isSignIn = type === "sign-in";
 
   return (
@@ -209,7 +242,7 @@ const AuthForm = ({type}: AuthFormProps) => {
       <div className="mt-2">
       <Button
           type="button"
-          onClick={() => {}}
+          onClick={handleFacebookSignIn}
           className="w-full mt-2 flex items-center justify-center gap-2 bg-[#1877F2] text-white font-semibold cursor-pointer"
         >
           <svg
