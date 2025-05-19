@@ -123,7 +123,7 @@ const Page = () => {
       ) : (
         <>
           <p className="text-center text-gray-600 mb-6">
-            We've sent a verification code to {email}. Please enter the code below to continue.
+            We&apos;ve sent a verification code to {email}. Please enter the code below to continue.
           </p>
           
           {errorMessage && (
