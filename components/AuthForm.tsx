@@ -45,45 +45,78 @@ const AuthForm = ({type}: AuthFormProps) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setLoading(true);
+      
       if (type === "sign-in") {
+        // Sign-in flow remains largely the same
         const { email, password } = values;
         const userCredentials = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
-
+  
         const idToken = await userCredentials.user.getIdToken();
-
-        if (!idToken) return;
-
-        await signIn({
+        if (!idToken) {
+          setLoading(false);
+          return;
+        }
+  
+        const signInResult = await signIn({
           email,
           idToken,
         });
-        router.push("/");
+  
+        if (signInResult?.requiresVerification && signInResult?.uid) {
+          // User needs to verify email for account creation
+          if (signInResult.message.includes("Please verify your email before signing in")) {
+            router.push(`/verify-email?uid=${signInResult.uid}&email=${email}`);
+            setLoading(false);
+            return;
+          }
+          
+          // User needs to verify the sign-in with code
+          router.push(`/verify-signin?uid=${signInResult.uid}&email=${email}`);
+          setLoading(false);
+          return;
+        }
+  
+        if (signInResult?.success) {
+          router.push("/");
+        } else {
+          console.log(signInResult?.message);
+        }
       } else {
+        // Sign-up flow - focus here
         const { name, email, password } = values;
         const userCredentials = await createUserWithEmailAndPassword(
           auth,
           email,
           password
         );
+        
         const result = await signUp({
           uid: userCredentials.user.uid,
           name: name!,
           email,
           password,
         });
-
+  
         if (!result?.success) {
           console.log(result?.message);
+          console.log("Verification code:", result.verificationCode);
+          setLoading(false);
           return;
         }
-        router.push("/sign-in");
+  
+        // Redirect to verification page with UID
+        router.push(`/verify-email?uid=${userCredentials.user.uid}&email=${email}`);
       }
+      
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }
 

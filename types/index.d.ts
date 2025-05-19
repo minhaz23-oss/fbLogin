@@ -31,3 +31,12 @@ interface FirebaseError extends Error {
     code?: string;
     message: string;
   }
+
+  interface VerifyEmailParams {
+    uid: string;
+    code: string;
+  }
+  interface VerifySignInParams {
+    uid: string;
+    code: string;
+  }
