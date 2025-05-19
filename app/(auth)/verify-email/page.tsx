@@ -7,14 +7,14 @@ import { Form } from "@/components/ui/form";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import FormField from "@/components/FormField";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { resendVerificationCode, verifyEmail } from "@/lib/actions/auth.action";
 
 const formSchema = z.object({
   code: z.string().min(2).max(50),
 });
 
-const Page = () => {
+const VerifyEmail = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,7 +44,7 @@ const Page = () => {
     return () => clearInterval(timer);
   }, []);
 
-  
+
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -164,4 +164,10 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading verification...</div>}>
+      <VerifyEmail />
+    </Suspense>
+  );
+}

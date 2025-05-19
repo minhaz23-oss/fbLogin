@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useRouter, useSearchParams } from "next/navigation";
 import FormField from "@/components/FormField";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { resendVerificationCode, verifySignIn } from "@/lib/actions/auth.action";
 
 
@@ -15,7 +15,7 @@ const formSchema = z.object({
   code: z.string().min(2).max(50),
 });
 
-const Page = () => {
+const VerifySignInContent = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -171,4 +171,10 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading verification...</div>}>
+      <VerifySignInContent />
+    </Suspense>
+  );
+}
