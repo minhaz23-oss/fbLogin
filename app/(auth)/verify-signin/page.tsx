@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import FormField from "@/components/FormField";
 import { useState, useEffect } from "react";
@@ -16,7 +15,7 @@ const formSchema = z.object({
   code: z.string().min(2).max(50),
 });
 
-const VerifySignIn = () => {
+const Page = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -172,4 +171,4 @@ const VerifySignIn = () => {
   );
 };
 
-export default VerifySignIn;
+export default Page;

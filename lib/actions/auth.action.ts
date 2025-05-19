@@ -52,59 +52,7 @@ async function sendVerificationEmail(email: string, code: string) {
   }
 }
 
-// export async function resendSignInVerificationCode(params: { uid: string, email: string }) {
-//   const { uid, email } = params;
-  
-//   try {
-//     // Check if there's an existing verification record
-//     const verificationDoc = await db
-//       .collection("signin_verifications")
-//       .doc(uid)
-//       .get();
-      
-//     if (!verificationDoc.exists) {
-//       return {
-//         success: false,
-//         message: "Verification request not found",
-//       };
-//     }
-    
-//     const verificationData = verificationDoc.data();
-    
-//     // Generate a new verification code
-//     const verificationCode = generateVerificationCode();
-//     const codeExpiry = Math.floor(Date.now() / 1000) + VERIFICATION_CODE_EXPIRY;
-    
-//     // Update the verification record with the new code
-//     await db.collection("signin_verifications").doc(uid).update({
-//       verificationCode,
-//       verificationCodeExpiry: codeExpiry,
-//     });
-    
-//     // Send the new verification code
-//     const emailSent = await sendVerificationEmail(email, verificationCode);
-//     if (!emailSent) {
-//       return {
-//         success: false,
-//         message: "Failed to send verification email. Please try again.",
-//       };
-//     }
-    
-//     return {
-//       success: true,
-//       message: "Verification code resent to your email.",
-//       // Return code only in development
-//       verificationCode:
-//         process.env.NODE_ENV === "development" ? verificationCode : undefined,
-//     };
-//   } catch (error) {
-//     console.log("Error resending verification code:", error);
-//     return {
-//       success: false,
-//       message: "Error while resending verification code",
-//     };
-//   }
-// }
+
 
 export async function resendVerificationCode(params: {
   uid: string;
@@ -137,7 +85,7 @@ export async function resendVerificationCode(params: {
     const codeExpiry = Math.floor(Date.now() / 1000) + VERIFICATION_CODE_EXPIRY;
     
     // Update fields based on verification type
-    const updateData: Record<string, any> = {
+    const updateData: Record<string, string | number> = {
       verificationCode,
       verificationCodeExpiry: codeExpiry,
     };

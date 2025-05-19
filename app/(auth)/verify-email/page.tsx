@@ -14,7 +14,7 @@ const formSchema = z.object({
   code: z.string().min(2).max(50),
 });
 
-const page = () => {
+const Page = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,11 +44,14 @@ const page = () => {
     return () => clearInterval(timer);
   }, []);
 
+  
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   };
+
+  
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setStatus("loading");
@@ -140,10 +143,25 @@ const page = () => {
               </Button>
             </form>
           </Form>
+          <div className="mt-6 text-center">
+            <p className="text-gray-600 text-sm">
+              Code expires in: {formatTime(countdown)}
+            </p>
+            
+            <button
+              onClick={handleResendCode}
+              disabled={countdown > 0 || status === "loading"}
+              className={`mt-2 text-sm ${
+                countdown > 0 ? "text-gray-400" : "text-blue-500 hover:underline"
+              }`}
+            >
+              {countdown > 0 ? "Resend code not available yet" : "Resend code"}
+            </button>
+          </div>
         </>
       )}
     </div>
   );
 };
 
-export default page;
+export default Page;
